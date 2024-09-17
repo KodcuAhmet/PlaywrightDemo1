@@ -16,9 +16,21 @@ namespace PlaywrightDemo1.Pages
         private ILocator _txtUsername => _page.Locator("#UserName");
         private ILocator _txtPassword => _page.Locator("#Password");
         private ILocator _btnLogin => _page.Locator("Log in");
-        private ILocator _lnkEmployeeDetails => _page.Locator("Employee Details");
+        private ILocator _lnkEmployeeLists => _page.Locator("Employee Details");
 
-        public async Task ClickLogin() => await _lnkLogin.ClickAsync();
+        [Obsolete]
+        public async Task ClickLogin()
+        {
+            await _page.RunAndWaitForNavigationAsync(async () =>
+            {
+                await _lnkLogin.ClickAsync();
+            }, new PageRunAndWaitForNavigationOptions
+            {
+                UrlString = "**/Login"
+            });
+        }
+
+        public async Task ClickEmployeeList() => await _lnkEmployeeLists.ClickAsync();
 
         public async Task Login(string userName, string password)
         {

@@ -78,5 +78,37 @@ namespace PlaywrightDemo1
             // Click button:has-text("Open AJAX content")
             await page.Locator("button:has-text(\"Open AJAX content\")").ClickAsync();
         }
+
+        [Test]
+        [Obsolete]
+        public async Task TestNetwork()
+        {
+            //Playwright
+            using var playwright = await Playwright.CreateAsync();
+            //Browser
+            await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = false
+            });
+            //Page
+            var page = await browser.NewPageAsync();
+            await page.GotoAsync("http://www.eaapp.somee.com");
+
+            var loginPage = new LoginPageUpgraded(page);
+            await loginPage.ClickLogin();
+            await loginPage.Login("admin", "password");
+
+            //var waitResponse = page.WaitForRequestAsync("**/Employee");
+            //await loginPage.ClickEmployeeList();
+            //var getResponse = await waitResponse;
+
+            var response = await page.RunAndWaitForResponseAsync(async () =>
+            {
+                await loginPage.ClickEmployeeList();
+            }, x => x.Url.Contains("/Employee") && x.Status == 200);
+
+            var isExist = await loginPage.IsEmployeeDetailsExists();
+            Assert.IsTrue(isExist);
+        }
     }
 }
