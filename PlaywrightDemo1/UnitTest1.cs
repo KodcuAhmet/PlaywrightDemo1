@@ -144,5 +144,33 @@ namespace PlaywrightDemo1
             var returnData = HttpUtility.UrlDecode(request.Url);
             returnData.Should().Contain("Account Login:Displayed Exit");
         }
+
+        [Test]
+        public async Task? FlipkartNetworkInterception()
+        {
+            using var playwright = await Playwright.CreateAsync();
+            await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = false,
+            });
+            var context = await browser.NewContextAsync();
+            var page = await browser.NewPageAsync();
+
+            page.Request += (_, request) => Console.WriteLine(request.Method + "---" + request.Url);
+            page.Response += (_, response) => Console.WriteLine(response.Status + "---" + response.Url);
+
+            //await page.RouteAsync("**/*", async route =>
+            //{
+            //    if (route.Request.ResourceType == "image")
+            //        await route.AbortAsync();
+            //    else
+            //        await route.ContinueAsync();
+            //});
+
+            await page.GotoAsync("https://flipkart.com/", new PageGotoOptions
+            {
+                WaitUntil = WaitUntilState.NetworkIdle
+            });
+        }
     }
 }
