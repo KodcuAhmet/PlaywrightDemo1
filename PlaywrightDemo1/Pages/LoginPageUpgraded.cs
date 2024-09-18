@@ -38,6 +38,6 @@ namespace PlaywrightDemo1.Pages
             await _txtPassword.FillAsync(password);
             await _btnLogin.ClickAsync();
         }
-        public async Task<bool> IsEmployeeDetailsExists() => await _lnkEmployeeDetails.IsVisibleAsync();
+        public async Task<bool> IsEmployeeDetailsExists() => await _lnkEmployeeLists.IsVisibleAsync();
     }
 }
